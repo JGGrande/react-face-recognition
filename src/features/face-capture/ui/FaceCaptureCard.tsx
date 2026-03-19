@@ -123,10 +123,10 @@ export function FaceCaptureCard() {
 
           <div className="grid gap-4 lg:grid-cols-[2fr_1fr]">
             <div className="space-y-2">
-              <div className="relative aspect-video overflow-hidden rounded-lg bg-muted">
+              <div className="relative aspect-[3/4] overflow-hidden rounded-lg bg-muted sm:aspect-video">
                 <video
                   ref={videoRef}
-                  className="h-full w-full object-cover"
+                  className="h-full w-full -scale-x-100 object-cover"
                   muted
                   autoPlay
                   playsInline
@@ -136,6 +136,7 @@ export function FaceCaptureCard() {
                   detectionResult={detectionResult}
                   qualityState={qualityState}
                   engine={engine}
+                  mirrored
                 />
 
                 {isEngineLoading ? (

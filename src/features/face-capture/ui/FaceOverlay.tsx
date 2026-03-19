@@ -10,12 +10,14 @@ type FaceOverlayProps = {
   detectionResult: FaceDetectionResult
   qualityState: CaptureQualityState
   engine: InferenceEngine
+  mirrored?: boolean
 }
 
 export function FaceOverlay({
   detectionResult,
   qualityState,
   engine,
+  mirrored = false,
 }: FaceOverlayProps) {
   const canvasRef = React.useRef<HTMLCanvasElement | null>(null)
 
@@ -53,10 +55,14 @@ export function FaceOverlay({
     context.clearRect(0, 0, frameWidth, frameHeight)
 
     for (const face of detectionResult.faces) {
+      const displayX = mirrored
+        ? frameWidth - face.boundingBox.x - face.boundingBox.width
+        : face.boundingBox.x
+
       context.lineWidth = 3
       context.strokeStyle = qualityState.passedAll ? primaryColor : mutedColor
       context.strokeRect(
-        face.boundingBox.x,
+        displayX,
         face.boundingBox.y,
         face.boundingBox.width,
         face.boundingBox.height
@@ -66,7 +72,7 @@ export function FaceOverlay({
       context.fillStyle = foregroundColor
       context.fillText(
         `conf: ${(face.confidence * 100).toFixed(1)}%`,
-        face.boundingBox.x,
+        displayX,
         Math.max(16, face.boundingBox.y - 6)
       )
     }
@@ -76,7 +82,7 @@ export function FaceOverlay({
     context.fillStyle = foregroundColor
     context.font = "13px sans-serif"
     context.fillText(`Engine: ${engine}`, 18, 30)
-  }, [detectionResult, engine, qualityState.passedAll])
+  }, [detectionResult, engine, mirrored, qualityState.passedAll])
 
   return (
     <canvas
