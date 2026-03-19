@@ -1,21 +1,43 @@
-# React + TypeScript + Vite + shadcn/ui
+# React Face Recognition PoC
 
-This is a template for a new Vite project with React, TypeScript, and shadcn/ui.
+PoC client-side para captura facial automática com três motores de inferência:
+- TensorFlow.js
+- MediaPipe Tasks Vision
+- face-api.js
 
-## Adding components
+## Scripts
 
-To add components to your app, run the following command:
+- `npm run dev`
+- `npm run lint`
+- `npm run build`
+
+## Deploy no GitHub Pages
+
+O workflow [deploy-github-pages.yml](.github/workflows/deploy-github-pages.yml) faz build e deploy automático para GitHub Pages a cada push na branch `main`.
+
+Antes do primeiro deploy, configure no repositório:
+- **Settings → Pages → Source**: `GitHub Actions`
+
+## Estratégia de performance
+
+- Code splitting por engine no build com `manualChunks`.
+- Import dinâmico com cache para cada strategy.
+- Preload em tempo ocioso dos motores não ativos para reduzir latência na troca.
+
+## Estratégia de modelos (CDN ou local)
+
+Por padrão os modelos são carregados via CDN. Para usar arquivos locais:
+
+1. Crie `.env` na raiz com:
 
 ```bash
-npx shadcn@latest add button
+VITE_FACE_MODEL_SOURCE=local
 ```
 
-This will place the ui components in the `src/components` directory.
+2. Adicione os assets em `public/models`:
 
-## Using components
+- `public/models/mediapipe/wasm/*`
+- `public/models/mediapipe/blaze_face_short_range.tflite`
+- `public/models/face-api/*` (arquivos dos modelos do face-api.js)
 
-To use the components in your app, import them as follows:
-
-```tsx
-import { Button } from "@/components/ui/button"
-```
+Para voltar ao CDN, remova a variável ou use `VITE_FACE_MODEL_SOURCE=cdn`.
